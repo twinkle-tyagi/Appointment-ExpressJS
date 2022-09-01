@@ -1,0 +1,23 @@
+<html>
+    <body>
+        <form onsubmit="store(event)" id = "myform" method="post" action="/View/index.html">
+            <label for="name">Name:</label>
+            <input type="text" id="username" name="username">
+            <label for="email">Email:</label>
+            <input type="text" id="emailId" name="emailId"> 
+            <label for="phone">Phone:</label>
+            <input type="text" id="phoneNum" name="phoneNum">
+            <input type="hidden" id="id" name="id">
+            <input class="btn" type="submit" value="Submit">
+        </form>
+        <ul id = 'userlist'>
+            
+        </ul>
+    </body>
+    
+    <script src="index1.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+
+</html>
+
+
