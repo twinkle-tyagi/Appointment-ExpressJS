@@ -1,6 +1,6 @@
 <html>
     <body>
-        <form onsubmit="store(event)" id = "myform" method="post" action="/View/index.html">
+        <form onsubmit="store(event)" id = "myform" method="post" action="/">
             <label for="name">Name:</label>
             <input type="text" id="username" name="username">
             <label for="email">Email:</label>
@@ -14,10 +14,122 @@
             
         </ul>
     </body>
-    
-    <script src="index1.js"> </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
-
 </html>
+    
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
 
+<script> 
+function store(event)
+        {
+            event.preventDefault();
+            let name = event.target.username.value;
+            let email = event.target.emailId.value;
+            let phone = event.target.phoneNum.value;
+          
+            let obj = {
+                name: name,
+                email: email,
+                phone: phone
+            }
+
+            axios.post("http://localhost:3000/addUser",obj)
+            .then(res => {
+                showUsers(obj);
+                //console.log(obj);
+                console.log('done')
+            })
+            .catch(err => console.log(err))
+        }
+
+        function showUsers(obj)
+        {
+            document.getElementById('username').value = ' ';
+            document.getElementById('emailId').value = ' ' ;
+            document.getElementById('phoneNum').value = ' ';  
+
+            // get parent node where to add (ul)
+            const parentNode = document.getElementById('userlist');
+
+            const childNode = `<li id=${obj.id}> username = ${obj.name}, Email-Id = ${obj.email}, Phone Number = ${obj.phone} 
+                <button onclick = deleteUser('${obj.id}')> X </button> 
+                <button onclick = editUser('${obj.id}')> Edit </button> </li>`
+            
+            //parentNode.innerHTML = childNode; // this will overwrite previous li in innerHTML.
+
+            // to add new li each time and not overwrite
+            parentNode.innerHTML = parentNode.innerHTML + childNode;
+        }
+
+        
+        function deleteUser(userId)
+        {
+            
+            axios.delete(`http://localhost:3000/deleteUser/${userId}`)
+            .then(() => {
+                removeFromScreen(userId);
+            })
+            .catch();
+              } 
+
+        /*
+        function removeFromScreen(email)
+        {
+            const parentNode = document.getElementById('userlist');
+            const child = document.getElementById(email);
+
+            // test if element to delete exist or not. If we try to delete element which is not present it will trow error
+            if(child)
+            {
+                parentNode.removeChild(child); 
+            }
+
+        } */
+
+        // removeFromScreen function when passing userId instead of email
+        function removeFromScreen(userId)
+        {
+            const parentNode = document.getElementById('userlist');
+            const child = document.getElementById(userId);
+
+            // test if element to delete exist or not. If we try to delete element which is not present it will trow error
+            if(child)
+            {
+                parentNode.removeChild(child); 
+            }
+
+        }
+
+        // to edit user 3 steps:
+        // 1. populate the text field on web page with previous value.
+        // 2. remove from li.
+        // 3. remove from storage.
+
+        function editUser(userId)
+        {   
+            axios.get(`http://localhost:3000/editUser/${userId}`)
+            .then(res => {
+                // populate fields in on page.
+                console.log(res);
+                document.getElementById('username').value = res.data.name; 
+                document.getElementById('emailId').value = res.data.email;
+                document.getElementById('phoneNum').value = res.data.phone;
+            })
+            .then(() => deleteUser(userId))
+            .catch();
+        }
+
+        window.addEventListener('DOMContentLoaded', () =>
+        {
+            axios.get("http://localhost:3000/")
+            .then(res => {
+                //console.log(res.data);
+                for(let i =0; i<=res.data.length; i++) {
+                    //console.log(res.data[i]);
+                    showUsers(res.data[i]);
+                }
+            })
+            .catch(err => console.log(err));
+        });
+        
+</script>

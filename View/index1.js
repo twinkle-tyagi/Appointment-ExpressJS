@@ -12,7 +12,10 @@
             }
 
             axios.post("localhost:3000/addUser",obj)
-            .then(res => showUsers(obj))
+            .then(res => {
+                showUsers(obj);
+                console.log('done')
+            })
             .catch(err => console.log(err))
         }
 
@@ -99,6 +102,7 @@
             axios.get("https://localhost:3000/addUser")
             .then((res) => {
                 for(var i =0; i< res.data.length; i++) {
+                    console.log(res[i])
                     showUsers(res.data[i]);
                 }
             })
